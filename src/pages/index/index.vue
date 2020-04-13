@@ -50,7 +50,7 @@
        
       </view>
        <!-- 回到顶部 -->
-      <view class="goTop icon-top"></view>
+      <view class="goTop icon-top" @click="goTop" v-if="scrollTop > 100"></view>
 	</view>
 </template>
 
@@ -63,7 +63,8 @@
         h:'auto',
         swiperlist:[],//轮播图
         navslist:[],// 导航
-        floorslist:[]// 楼层数据
+        floorslist:[],// 楼层数据
+        scrollTop:null//距离顶部的滚动距离
 			}
 		},
 		onLoad() {
@@ -99,7 +100,7 @@
           let res=await this.http({
               url:'/api/public/v1/home/swiperdata'
           })
-          console.log('轮播图res',res)
+          // console.log('轮播图res',res)
           this.swiperlist=res.message
       },
       // 获取导航数据
@@ -107,7 +108,7 @@
         let res=await this.http({
           url:"/api/public/v1/home/catitems"
         })
-        console.log('导航菜单数据',res)
+        // console.log('导航菜单数据',res)
         this.navslist=res.message
       },
       // 获取楼层数据
@@ -115,13 +116,25 @@
         let res=await this.http({
           url:"/api/public/v1/home/floordata"
         })
-        console.log('楼层数据',res)
+        // console.log('楼层数据',res)
         this.floorslist=res.message
+      },
+      // 点击字体图标回到顶部
+      goTop(){
+        uni.pageScrollTo({
+          scrollTop: 0,
+          duration: 300
+        });
       }
 
     },
     components:{
       search
+    },
+    //监听页面滚动事件,只有页面滚动下去例如才显示"回到顶部"的字体图标
+    onPageScroll(obj){
+      // console.log("开始滚动了",obj)
+      this.scrollTop=obj.scrollTop
     },
     async onPullDownRefresh(){
       console.log('首页下拉啦~~')
