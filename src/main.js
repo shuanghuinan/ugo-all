@@ -9,6 +9,7 @@ Vue.prototype.http=async function(options){
   // 发送之前loading
   uni.showLoading({
     title: '加载中',
+    mask:true //加上遮罩层
   })
   let baseURL="https://www.uinav.com"
 

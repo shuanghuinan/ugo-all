@@ -30,7 +30,10 @@
       "path": "pages/goods/index"
     },
     {
-      "path": "pages/list/index"
+      "path": "pages/list/index",
+      "style":{
+        "onReachBottomDistance":50
+      }
     },
     {
       "path": "pages/order/index"
