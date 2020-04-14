@@ -10,11 +10,11 @@
     <div class="search-content">
       <div class="title">搜索历史<span class="clear" @click="clear"></span></div>
       <div class="history">
-        <navigator url="/pages/list/index" v-for="(item,index) in history" :key="index">{{item}}</navigator>
+        <navigator :url="'/pages/list/index?query='+item" v-for="(item,index) in history" :key="index">{{item}}</navigator>
       </div>
       <!-- 结果 -->
       <scroll-view scroll-y class="result"  v-if="searchList.length>0">
-        <navigator url="/pages/goods/index" v-for="item in searchList" :key="item.cat_id">{{item.goods_name}}</navigator>
+        <navigator :url="'/pages/goods/index?id='+ item.goods_id" v-for="item in searchList" :key="item.goods_id">{{item.goods_name}}</navigator>
       </scroll-view>
     </div>
   </div>
@@ -70,7 +70,7 @@
       },
       // 按回车时
       goList(){
-        uni.navigateTo({url: '/pages/list/index?qurey='+this.searchContent}); // 带着参数跳转到商品列表页
+        uni.navigateTo({url: '/pages/list/index?query='+this.searchContent}); // 带着参数跳转到商品列表页
         this.history.push(this.searchContent)       // 将当前输入框的内容加到搜索历史列表里
         this.history=[...new Set(this.history)]     // 进行去重
         uni.setStorageSync('history',this.history)  // 存入本地

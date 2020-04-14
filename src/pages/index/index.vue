@@ -67,7 +67,7 @@
 		},
 		methods: {
       indexFather(h){
-         console.log('index首页执行了',h)
+        //  console.log('index首页执行了',h)
          this.h=h
       },
       // 获取轮播图数据

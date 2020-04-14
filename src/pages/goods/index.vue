@@ -64,16 +64,18 @@
       addToCart(){
         // 首先要明白一点,购物车数据使用本地存储来管理的
         // 将当前商品信息中的某些信息(与购物车相关的信息), 解析出来存入到一个对象里,这个对象最后要在购物车里面进行渲染
-        let { goods_id , goods_name , goods_price, goods_number , goods_small_logo } = this.goodsInfo
+        let { goods_id , goods_name , goods_price , goods_small_logo } = this.goodsInfo
         // 判断当前购物车里面的商品id值有没有和当前商品的id值一样的
-        let index = this.carts.findIndex((item)=>{ return item.goods_id = goods_id })
+        let index = this.carts.findIndex((item)=>{ return item.goods_id === goods_id })
 
         if(index===-1){
-          // 如果没有的话,就将该商品的所有信息加进购物车(找不到就会返回-1,-1表示没找到)---还加了一条辅助数据goods_checked,表示该商品在购物车里面是否被选中
-          this.carts.push({goods_id , goods_name , goods_price, goods_number , goods_small_logo , goods_checked:true})
+          // 如果没有的话,就将该商品的所有信息加进购物车(找不到就会返回-1,-1表示没找到)
+          // ---this_number表示当前商品在购物车中有几份
+          // ---还加了一条辅助数据goods_checked,表示该商品在购物车里面是否被选中
+          this.carts.push({goods_id , goods_name , goods_price , goods_small_logo , this_number:1 , goods_checked:true})
         }else{
           // 否则, 就将购物车内当前商品的数量加一
-          this.carts[index].goods_number += 1
+          this.carts[index].this_number += 1
         }
 
         // 然后将购物车数据存入到本地当中
