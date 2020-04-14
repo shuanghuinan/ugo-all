@@ -3,33 +3,18 @@
   <div class="search" :class="{active: isfocus}">
     <!-- 搜索框 -->
     <div class="input-wrap" @click="goSearch">
-      <input type="text" placeholder="请输入搜索商品">
-      <span class="cancle" @click.stop="goCancel">取消</span>
+      <input @input="searched" @confirm="goList" v-model="searchContent" type="text" placeholder="请输入搜索商品">
+      <span class="cancle" @click.stop="goCancel" >取消</span>
     </div>
     <!-- 搜索结果 -->
     <div class="search-content">
-      <div class="title">搜索历史<span class="clear"></span></div>
+      <div class="title">搜索历史<span class="clear" @click="clear"></span></div>
       <div class="history">
-        <navigator url="/pages/list/index">小米</navigator>
-        <navigator url="/pages/list/index">智能电视</navigator>
-        <navigator url="/pages/list/index">小米空气净化器</navigator>
-        <navigator url="/pages/list/index">西门子洗碗机</navigator>
-        <navigator url="/pages/list/index">华为手机</navigator>
-        <navigator url="/pages/list/index">苹果</navigator>
-        <navigator url="/pages/list/index">锤子</navigator>
+        <navigator url="/pages/list/index" v-for="(item,index) in history" :key="index">{{item}}</navigator>
       </div>
       <!-- 结果 -->
-      <scroll-view scroll-y class="result">
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-        <navigator url="/pages/goods/index">小米</navigator>
-
+      <scroll-view scroll-y class="result"  v-if="searchList.length>0">
+        <navigator url="/pages/goods/index" v-for="item in searchList" :key="item.cat_id">{{item.goods_name}}</navigator>
       </scroll-view>
     </div>
   </div>
@@ -40,31 +25,60 @@
     data () {
       return {
         isfocus: false,
-        placeholder: ''
+        placeholder: '',
+        searchContent: "", //搜索框的内容
+        searchList:[],//搜索内容列表
+        history:uni.getStorageSync('history') || [] // 搜索历史----如果本地有数据,就用本地的,没有就用空数组[]
       }
     },
     methods: {
-      goSearch (ev) {
+      goSearch () {
         // 获取焦点 isfocus true 加上 active
         this.isfocus=true;
         // 获取屏幕高度 微信提供了
         // wx. ---》换成 uni. 就行
         let res= uni.getSystemInfoSync()
-        console.log('结果',res)
+        // console.log('结果',res)
         this.$emit("my",res.windowHeight+'px')
 
         // 隐藏tabBar
         uni.hideTabBar();
       },
+      // 点取消时
       goCancel () {
+        // 清空输入框
+        this.searchContent=""
+        // 清空搜索内容列表
+        this.searchList=[]
         // 取消 isfocus false 加上 active
         this.isfocus=false;
-
         // 触发父组件自定义事件
         this.$emit('my', 'auto');
-
         // 显示tabBar
         uni.showTabBar();
+      },
+      // 在输入框输入文字时,发请求将与关键字相关的商品显示在列表中
+      async searched(){
+        let res=await this.http({
+          url:"/api/public/v1/goods/qsearch",
+          data:{
+            query:this.searchContent
+          }
+        })
+        console.log(res);
+        this.searchList=res.message
+      },
+      // 按回车时
+      goList(){
+        uni.navigateTo({url: '/pages/list/index?qurey='+this.searchContent}); // 带着参数跳转到商品列表页
+        this.history.push(this.searchContent)       // 将当前输入框的内容加到搜索历史列表里
+        this.history=[...new Set(this.history)]     // 进行去重
+        uni.setStorageSync('history',this.history)  // 存入本地
+      },
+      //点击x号时,清除历史记录
+      clear(){
+        this.history=[] // 清空历史记录列表
+        uni.removeStorageSync('history') // 清空本地中的历史记录
       }
     }
   }

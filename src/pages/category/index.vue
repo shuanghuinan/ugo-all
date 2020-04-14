@@ -47,7 +47,7 @@
       // 获取所有分类的信息
       async getAllCate(){
         let res=await this.http({
-          url:"/api/public/v1/categories"
+          url:"/api/public/v1/categories",
         })
         this.allCate = res.message
         console.log(res.message);

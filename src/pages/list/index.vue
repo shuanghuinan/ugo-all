@@ -76,6 +76,16 @@
           url: '/pages/goods/index'
         })
       }
+    },
+    data(){
+      return {
+        query:"" // 商品列表接收的参数
+      }
+    },
+    onLoad(params){
+      this.query=params.query
+      // console.log(params);
+      
     }
   }
 </script>
