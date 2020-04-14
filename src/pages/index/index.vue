@@ -7,7 +7,7 @@
           <swiper indicator-dots :autoplay="true">
              
              <swiper-item v-for="item in swiperlist" :key="item.goods_id">
-                <navigator url="/pages/goods/index">
+                <navigator :url="'/pages/goods/index?id='+ item.goods_id">
                     <image :src="item.image_src"></image>
                 </navigator>
              </swiper-item>
@@ -34,7 +34,7 @@
           <view class="item"  >        
               <navigator  v-for="subitem in item.product_list" :key="subitem.image_src" :url="subitem.navigator_url">
                   <image :src="subitem.image_src"></image>
-              </navigator>              
+              </navigator>
           </view>
         </view>
        

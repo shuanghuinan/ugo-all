@@ -2,38 +2,26 @@
   <view class="wrapper">
     <!-- 商品图片 -->
     <swiper class="pics" indicator-dots indicator-color="rgba(255, 255, 255, 0.6)" indicator-active-color="#fff">
-      <swiper-item>
-        <image src="http://static.botue.com/ugo/uploads/detail_1.jpg"></image>
-      </swiper-item>
-      <swiper-item>
-        <image src="http://static.botue.com/ugo/uploads/detail_2.jpg"></image>
-      </swiper-item>
-      <swiper-item>
-        <image src="http://static.botue.com/ugo/uploads/detail_3.jpg"></image>
-      </swiper-item>
-      <swiper-item>
-        <image src="http://static.botue.com/ugo/uploads/detail_4.jpg"></image>
-      </swiper-item>
-      <swiper-item>
-        <image src="http://static.botue.com/ugo/uploads/detail_5.jpg"></image>
+      <swiper-item v-for="(item,index) in goodsInfo.pics" :key="index">
+        <image :src="item.pics_big"></image>
       </swiper-item>
     </swiper>
     <!-- 基本信息 -->
     <view class="meta">
-      <view class="price">￥199</view>
-      <view class="name">初语秋冬新款毛衣女 套头宽松针织衫简约插肩袖上衣</view>
+      <view class="price">￥{{goodsInfo.goods_price}}</view>
+      <view class="name">{{goodsInfo.goods_name}}</view>
       <view class="shipment">快递: 免运费</view>
       <text class="collect icon-star">收藏</text>
     </view>
     <!-- 商品详情 -->
     <view class="detail">
-      <rich-text></rich-text>
+      <rich-text v-html="goodsInfo.goods_introduce"></rich-text>
     </view>
     <!-- 操作 -->
     <view class="action">
       <button open-type="contact" class="icon-handset">联系客服</button>
       <text class="cart icon-cart" @click="goCart">购物车</text>
-      <text class="add">加入购物车</text>
+      <text class="add" @click="addToCart">加入购物车</text>
       <text class="buy" @click="createOrder">立即购买</text>
     </view>
   </view>
@@ -41,18 +29,64 @@
 
 <script>
   export default {
-
+    data(){
+      return {
+        id:null, // 表示当前商品的id值
+        goodsInfo:null, // 表示商品信息
+        carts:uni.getStorageSync('carts') || [] // 表示购物车信息,本地有就用本地,没有就是[]
+      }
+    },
     methods: {
+      // 跳转到购物车
       goCart () {
         uni.switchTab({
           url: '/pages/cart/index'
         })
       },
+      // 立即购买
       createOrder () {
         uni.navigateTo({
           url: '/pages/order/index'
         })
+      },
+      // 获取商品详情
+      async getGoods(){
+        let res =await this.http({
+          url:"/api/public/v1/goods/detail",
+          data:{
+            goods_id:this.id
+          }
+        })
+        console.log(res.message);
+        this.goodsInfo=res.message        
+      },
+      // 点击加入购物车时
+      addToCart(){
+        // 首先要明白一点,购物车数据使用本地存储来管理的
+        // 将当前商品信息中的某些信息(与购物车相关的信息), 解析出来存入到一个对象里,这个对象最后要在购物车里面进行渲染
+        let { goods_id , goods_name , goods_price, goods_number , goods_small_logo } = this.goodsInfo
+        // 判断当前购物车里面的商品id值有没有和当前商品的id值一样的
+        let index = this.carts.findIndex((item)=>{ return item.goods_id = goods_id })
+
+        if(index===-1){
+          // 如果没有的话,就将该商品的所有信息加进购物车(找不到就会返回-1,-1表示没找到)---还加了一条辅助数据goods_checked,表示该商品在购物车里面是否被选中
+          this.carts.push({goods_id , goods_name , goods_price, goods_number , goods_small_logo , goods_checked:true})
+        }else{
+          // 否则, 就将购物车内当前商品的数量加一
+          this.carts[index].goods_number += 1
+        }
+
+        // 然后将购物车数据存入到本地当中
+        uni.setStorageSync('carts',this.carts)
+
+        // 提示框
+        uni.showToast({title: '加入成功！'});
       }
+    },
+    onLoad(params){
+      this.id=params.id
+      // console.log(params);
+      this.getGoods()
     }
   }
 </script>

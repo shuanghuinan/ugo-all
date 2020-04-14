@@ -8,7 +8,7 @@
     </view>
     <!-- 商品列表 -->
     <view class="goods" v-for="item in goods" :key="item.cat_id">
-      <view class="item" @click="goDetail">
+      <view class="item" @click="goDetail(item.cat_id)">
         <!-- 商品图片 -->
         <image class="pic" :src="item.goods_small_logo"></image>
         <!-- 商品信息 -->
@@ -19,6 +19,7 @@
           </view>
         </view>
       </view>
+    </view>
   </view>
 </template>
 
@@ -37,9 +38,9 @@
     },
     methods: {
       // 去商品详情页
-      goDetail () {
+      goDetail (id) {
         uni.navigateTo({
-          url: '/pages/goods/index'
+          url: `/pages/goods/index?id=${id}`
         })
       },
       // 获取商品详情
