@@ -84,7 +84,7 @@
     },
     onLoad(params){
       this.query=params.query
-      // console.log(params);
+      console.log(params);
       
     }
   }

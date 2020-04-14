@@ -19,7 +19,7 @@
             <view class="title">{{item.cat_name}}</view>
             <!-- 品牌 -->
             <view class="brands">
-              <navigator url="/pages/list/index" v-for="brand in item.children" :key="brand.cat_id">
+              <navigator :url="'/pages/list/index?query='+ brand.cat_name" v-for="brand in item.children" :key="brand.cat_id">
                 <image :src="brand.cat_icon"></image>
                 <text>{{brand.cat_name}}</text>
               </navigator>

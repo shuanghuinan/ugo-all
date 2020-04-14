@@ -65,7 +65,7 @@
             query:this.searchContent
           }
         })
-        console.log(res);
+        // console.log(res);
         this.searchList=res.message
       },
       // 按回车时

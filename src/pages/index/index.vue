@@ -16,13 +16,9 @@
       </view>
       <!-- 导航菜单宫格 -->
       <view class="navs">
-           <navigator 
-            v-for="item in navslist"
-            :key="item.navigator_url"
-            url="/pages/category/index">
-              <image :src="item.image_src"></image>
-           </navigator>
-
+        <navigator open-type="switchTab" v-for="item in navslist" :key="item.navigator_url" url="/pages/category/index" >
+          <image :src="item.image_src"></image>
+        </navigator>
       </view>
       <!-- 楼层 -->
       <view class="box">
@@ -35,16 +31,10 @@
               <image :src="item.floor_title.image_src"></image>
           </view>
           <!-- 条目 -->
-          <view class="item"  >
-              
-              <navigator 
-              v-for="subitem in item.product_list"
-              :key="subitem.image_src"
-              :url="subitem.navigator_url" 
-              >
+          <view class="item"  >        
+              <navigator  v-for="subitem in item.product_list" :key="subitem.image_src" :url="subitem.navigator_url">
                   <image :src="subitem.image_src"></image>
-              </navigator>
-              
+              </navigator>              
           </view>
         </view>
        
