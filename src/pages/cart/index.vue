@@ -27,7 +27,7 @@
             <!-- 加减 -->
             <view class="amount">
               <text class="reduce" @click="numSub(index)">-</text>
-              <input type="number" :value="item.this_number" class="number">
+              <input @input="numChange(index,$event)" type="number" :value="item.this_number" class="number">
               <text class="plus" @click="numAdd(index)">+</text>
             </view>
           </view>
@@ -101,6 +101,25 @@
         this.cartsList[index].this_number-=1
         console.log(num)
         uni.setStorageSync('carts',this.cartsList)
+      },
+      // 当文本框内的数量变化时
+      numChange(index,e){
+        // console.log(e)
+        // 当前输入框的值   因为value是个字符串,所以要先将其转为数字
+        let val = parseInt(e.detail.value)
+        if(val<=1){
+          val=1
+          uni.showToast({ title:'亲,当前商品数量不能再减少了哦', icon:"none" })
+          return
+        }
+        if(val>=10){
+          val=10
+          uni.showToast({ title:'亲,当前商品最多可加10件哦,不可以再加了', icon:"none" })
+        }
+        // 赋值
+        this.cartsList[index].this_goods = val
+        //存入本地
+        uni.setStorageSync('carts', this.cartsList)
       }
        
     },
