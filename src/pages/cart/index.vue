@@ -15,20 +15,20 @@
       <view class="item">
         <!-- 店铺名称 -->
         <view class="shopname">优购生活馆</view>
-        <view class="goods" v-for="item in cartsList" :key="item.goods_id">
+        <view class="goods" v-for="(item,index) in cartsList" :key="item.goods_id">
           <!-- 商品图片 -->
-          <image class="pic" :src="item.goods_small_logo"></image>
+          <image class="pic" :src="item.goods_small_logo"  @click="toGoods(item.goods_id)"></image>
           <!-- 商品信息 -->
           <view class="meta">
-            <view class="name">{{item.goods_name}}</view>
+            <view class="name"  @click="toGoods(item.goods_id)">{{item.goods_name}}</view>
             <view class="price">
               <text>￥</text>{{item.goods_price}}<text>.00</text>
             </view>
             <!-- 加减 -->
             <view class="amount">
-              <text class="reduce">-</text>
+              <text class="reduce" @click="numSub(index)">-</text>
               <input type="number" :value="item.this_number" class="number">
-              <text class="plus">+</text>
+              <text class="plus" @click="numAdd(index)">+</text>
             </view>
           </view>
           <!-- 选框 -->
@@ -56,10 +56,56 @@
   export default {
     data(){
       return {
-        cartsList:uni.getStorageSync('carts') || []
+        cartsList:[] // 购物车列表
       }
     },
-    onLoad(){
+    methods:{
+      // 点击每一项的图片和标题时,去商品详情页
+      toGoods(id){
+        uni.navigateTo({
+           url: `/pages/goods/index?id=${id}`
+        });
+      },
+      // 点加号时,购物车数量加一
+      numAdd(index){
+        // 当前已加购的数量
+        let num=this.cartsList[index].this_number
+        // 如果当前已添加的数量>=10,则不能再添加,显示提示信息然后return即可
+        if(num>=10){
+          uni.showToast({ title:'亲,当前商品最多只能添加10件哦', icon:"none" })
+          return
+        }else{
+          // 否则才可以进行增加操作---但是进行增加操作又有一个前提:有库存
+          // 所以又要进行判断 
+          if(this.cartsList[index].goods_number>num){
+            // 如果当前商品的库存量 > 当前已加购的数量,才可以增加
+            this.cartsList[index].this_number+=1
+          }else{
+            // 否则显示提示信息
+            uni.showToast({ title:'亲,当前商品库存已不足了哦,不可以再加了', icon:"none" })
+            return
+          }
+        // 操作完记得存入本地
+        uni.setStorageSync('carts', this.cartsList)
+        }
+      },
+      // 点减号时,购物车数量减一
+      numSub(index){
+        // 当前已加购的数量
+        let num=this.cartsList[index].this_number
+        // 如果数量<1,就代表不能再减了,给个提示信息并return
+        if(num<=1) {
+          uni.showToast({ title:'亲,当前商品数量不能再减少了哦', icon:"none" })
+          return 
+        }
+        this.cartsList[index].this_number-=1
+        console.log(num)
+        uni.setStorageSync('carts',this.cartsList)
+      }
+       
+    },
+    onShow(){
+      this.cartsList = uni.getStorageSync('carts') || []
       console.log(this.cartsList);
     }
 
