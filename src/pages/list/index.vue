@@ -20,6 +20,7 @@
         </view>
       </view>
     </view>
+  <view v-show="isend"> 见底了,没有了 </view>
   </view>
 </template>
 
@@ -33,7 +34,8 @@
             pagesize:20 //每页长度
           },
           total:null, //代表一共有多少条商品
-          goods:[] //用来存放商品列表        
+          goods:[] ,//用来存放商品列表     
+          isend:false // 用来表示列表数据是否全部加载完   
       }
     },
     methods: {
@@ -49,7 +51,7 @@
           url:"/api/public/v1/goods/search",
           data:this.parameter
         })
-        console.log(res);
+        // console.log(res);
         // 将后台返回的数据加进列表
         this.goods.push(...res.message.goods)
         // 赋值总条数
@@ -58,8 +60,11 @@
     },
     // 下拉加载触发的事件
     onReachBottom(){
-        // 如果列表的长度(代表条数)===总条数,则代表到底了没有数据了,应return回去
-        if(this.goods.length===this.total) return 
+        // 如果列表的长度(代表条数)===总条数,则代表到底了没有数据了,应显示"见底了"提示信息,并return回去
+        if(this.goods.length===this.total){
+          this.isend=true
+          return         
+        } 
         // 否则就将页码加一,并且发请求
         this.parameter.pagenum += 1
         this.getDetailList()
