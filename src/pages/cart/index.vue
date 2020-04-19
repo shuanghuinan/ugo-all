@@ -33,7 +33,7 @@
           </view>
           <!-- 选框 -->
           <view class="checkbox">
-            <icon type="success" size="20" :color="item.goods_checked ? '#ea4451' : '#ccc'"></icon>
+            <icon @click="isChoose(index)" type="success" size="20" :color="item.goods_checked ? '#ea4451' : '#ccc'"></icon>
           </view>
         </view>
       </view>
@@ -41,7 +41,7 @@
     <!-- 其它 -->
     <view class="extra">
       <label class="checkall">
-        <icon type="success" color="#ccc" size="20"></icon>
+        <icon @click="checkAll" type="success" size="20" :color="allGoods ? '#ea4451' : '#ccc'"></icon>
         全选
       </label>
       <view class="total">
@@ -119,8 +119,41 @@
         this.cartsList[index].this_number = val
         //存入本地
         uni.setStorageSync('carts', this.cartsList)
+      },
+      // 点击时切换是否选中
+      isChoose(index){
+        this.cartsList[index].goods_checked = !this.cartsList[index].goods_checked
+        uni.setStorageSync('carts',this.cartsList)
+      },
+      // 点击全选按钮
+      checkAll(){
+        // 如果当前所有商品是全选状态,就代表要取消全选
+        if(this.allGoods){
+          this.cartsList.forEach((item)=>{
+          return item.goods_checked=false
+          })
+        }else{
+          // 否则代表要进行全选操作 
+          this.cartsList.forEach((item)=>{
+            return item.goods_checked=true
+          })
+        }
+        // 存入本地
+        uni.setStorageSync('carts',this.cartsList)
       }
        
+    },
+    computed:{
+      // 代表当前已经被选中的商品
+      checkedGoods(){
+        return this.cartsList.filter((item)=>{
+          return item.goods_checked 
+        })
+      },
+      // 代表选中全部商品
+      allGoods(){
+        return this.cartsList.length===this.checkedGoods.length
+      }
     },
     onShow(){
       this.cartsList = uni.getStorageSync('carts') || []
