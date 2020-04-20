@@ -48,7 +48,13 @@
 
 <script>
   export default {
-    
+    onShareAppMessage(){
+      return {
+        title:'达拉蹦吧~~~',
+        path: '/pages/index/index',
+        imageUrl:"http://t9.baidu.com/it/u=1307125826,3433407105&fm=79&app=86&f=JPEG?w=5760&h=3240" 
+      }
+    }
   }
 </script>
 
