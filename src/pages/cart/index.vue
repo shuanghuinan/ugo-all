@@ -1,15 +1,16 @@
 <template>
   <view class="wrapper">
     <!-- 收货信息 -->
-    <view class="shipment">
+    <view class="shipment" v-if="address">
       <view class="dt">收货人: </view>
       <view class="dd meta">
-        <text class="name">刘德华</text>
-        <text class="phone">13535337057</text>
+        <text class="name">{{address.userName}}</text>
+        <text class="phone">{{address.telNumber}}</text>
       </view>
       <view class="dt">收货地址:</view>
-      <view class="dd">广东省广州市天河区一珠吉</view>
+      <view class="dd">{{Address}}</view>
     </view>
+    <button v-else type="primary" @click="getAddress">点击添加收货地址</button>
     <!-- 购物车 -->
     <view class="carts">
       <view class="item">
@@ -56,7 +57,8 @@
   export default {
     data(){
       return {
-        cartsList:[] // 购物车列表
+        cartsList:[], // 购物车列表
+        address:null // 存放地址信息
       }
     },
     methods:{
@@ -140,6 +142,15 @@
         }
         // 存入本地
         uni.setStorageSync('carts',this.cartsList)
+      },
+      // 点击添加地址按钮
+      getAddress(){
+        uni.chooseAddress({
+          success: (res)=>{
+            console.log(res)
+            this.address=res
+          }
+        });
       }
        
     },
@@ -161,6 +172,12 @@
           return total+=item.goods_price*item.this_number
         })
         return total
+      },
+      // 收货地址
+      Address(){
+        if(this.address){
+          return this.address.provinceName + this.address.cityName + this.address.countyName + this.address.detailInfo
+        }
       }
     },
     onShow(){
