@@ -45,7 +45,7 @@
         全选
       </label>
       <view class="total">
-        合计: <text>￥</text><label>14110</label><text>.00</text>
+        合计: <text>￥</text><label>{{total}}</label><text>.00</text>
       </view>
       <view class="pay">结算(3)</view>
     </view>
@@ -153,6 +153,14 @@
       // 代表选中全部商品
       allGoods(){
         return this.cartsList.length===this.checkedGoods.length
+      },
+      // 当前被选中商品的价格
+      total(){
+        let total=0
+        this.checkedGoods.forEach(item=>{
+          return total+=item.goods_price*item.this_number
+        })
+        return total
       }
     },
     onShow(){
