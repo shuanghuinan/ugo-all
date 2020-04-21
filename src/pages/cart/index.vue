@@ -48,7 +48,7 @@
       <view class="total">
         合计: <text>￥</text><label>{{total}}</label><text>.00</text>
       </view>
-      <view class="pay">结算(3)</view>
+      <view class="pay" @click="pay">结算({{checkedGoods.length}})</view>
     </view>
   </view>
 </template>
@@ -147,10 +147,32 @@
       getAddress(){
         uni.chooseAddress({
           success: (res)=>{
-            console.log(res)
+            // console.log(res)
             this.address=res
           }
         });
+      },
+      // 点击结算按钮
+      pay(){
+        // 可以结算有三个前提: 1.有收货地址 2.至少选择了一个商品 3.已经登录
+        // 如果没有收货地址的话
+        if(!this.Address){
+          uni.showToast({ title:"选择收货地址之后才可以进行订单的结算哦", icon:"none" })
+          return 
+        }
+        // 如果没有选择商品的话
+        if(!this.checkedGoods){
+          uni.showToast({ title: '您现在还没有选择商品哦', icon: "none" })
+          return
+        }
+        // 如果没有登录的话
+        if(!uni.getStorageSync('token')){
+          uni.showToast({ title: '您当前还没有登录哦',icon:"none" })
+          uni.navigateTo({ url: "/pages/auth/index"}); // 跳转到登录页面
+          return
+        }
+
+        // 否则代表满足结算的前提,要跳转到订单页面
       }
        
     },
