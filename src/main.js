@@ -16,7 +16,8 @@ Vue.prototype.http=async function(options){
   let res=await uni.request({
     url: baseURL+options.url,
     data:options.data,
-    method: options.method?options.method:'GET'
+    method: options.method ? options.method : 'GET',
+    header:options.header
   })
   // 发送成功之后 隐藏loading
   wx.hideLoading()
